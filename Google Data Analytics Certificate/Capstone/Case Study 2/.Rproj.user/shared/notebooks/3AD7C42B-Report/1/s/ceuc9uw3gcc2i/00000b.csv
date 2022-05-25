@@ -1,0 +1,7 @@
+"0","tmp <- weight_data"
+"0","tmp_labels <- c(""Manual"",""Automatic"")"
+"0","ggplot(tmp)+"
+"0","  geom_bar(mapping =aes(x=IsManualReport), fill =""paleturquoise4"")+"
+"0","  labs(x=""Manual or Automatic Report"", y=""Count"",title=""Type of Report"")+"
+"0","  scale_x_discrete(labels=tmp_labels)+"
+"0","  theme_minimal()"

@@ -1,0 +1,128 @@
+---
+title: "Output"
+author: "Wei Hern"
+date: "11/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r Environment Setup}
+library(tidyverse)
+library(readr)
+library(lubridate)
+library("here")
+library("skimr")
+library("janitor")
+nov20 <- read_csv("202011-divvy-tripdata.csv")
+dec20 <- read_csv("202012-divvy-tripdata.csv")
+jan21 <- read_csv("202101-divvy-tripdata.csv")
+feb21 <- read_csv("202102-divvy-tripdata.csv")
+mar21 <- read_csv("202103-divvy-tripdata.csv")
+apr21 <- read_csv("202104-divvy-tripdata.csv")
+may21 <- read_csv("202105-divvy-tripdata.csv")
+jun21 <- read_csv("202106-divvy-tripdata.csv")
+jul21 <- read_csv("202107-divvy-tripdata.csv")
+aug21 <- read_csv("202108-divvy-tripdata.csv")
+sep21 <- read_csv("202109-divvy-tripdata.csv")
+oct21 <- read_csv("202110-divvy-tripdata.csv")
+```
+##Table of Contents
+Deliverables:
+1. A clear statement of the business task
+2. A description of all data sources used
+3. Documentation of any cleaning or manipulation of data
+4. A summary of your analysis
+5. Supporting visualizations and key findings
+6. Your top three recommendations based on your analysis
+
+##Business Task
+
+In this report, I will examine how Cyclistic, a bike-share company in Chicago, can maximize the number of annual memberships. To do so, I will answer the following research questions:
+*How do annual members and casual riders use Cyclistic bikes differently?
+*Why casual riders would buy a membership?
+*How digital media could affect their marketing tactics?
+
+To that end, the report will conclude with suggestions for a new marketing strategy to convert casual riders into annual members. 
+
+This report defines customers who purchase single-ride or fill-day passes as casual riders while customers who purchase annual memebrships are defined as Cyclistic members. 
+
+##Prepare and Process the Data
+
+The data used in this report is the previous 12 months of Cyclistic trip data which has been made available by Motivate International Inc. under this license[link](https://www.divvybikes.com/data-license-agreement). For privacy purposes, no personally identifiable information was used. 
+
+To analyze the data, the following ROCCC framework was used:
+***Reliable:** This data is reliable as there is unlikely to be sampling bias given that I am using the data wholesale from Cyclistic.
+***Original:** This data is considered original as it is downloaded directly from Cyclistic (first-party data).
+***Comprehensive:** The data is comprehensive given that it contains many details for each individual trip.
+***Current:** The data is current as it is the previous twelve months of data.
+***Cited:** The data is first-hand data.
+
+###Structure
+Each month's trip data is downloaded individually as a .csv file. Each file contains 13 columns:
+*A ride_id to identify each ride individually
+*rideable_type which identifies the type of bike used. There are 3 options: electric_bike, docked_bike, and classic_bike
+*start and end date and time: started_at, ended_ at 
+*The starting and ending station names and ID - start_nation_name, start_station_id, end_station_name, end_station_id
+*Detailed geographical coordinates of the starting and ending stations: start_lat,start_lng, end_lat, end_lng
+*A boolean value detailing if a ride was by a casual rider or a member
+
+##The Process 
+After combining the 12 csv files into tibble "ttm", I created 2 columns: ride_length and day_of_week. I then removed all rows where the trip duration was negative and dropped all rows with NULL values. 
+
+
+
+I also created 2 separate tibbles filtered for members and casual for easier reference in the analysis process. 
+
+
+```{r Process and Clean The Data}
+ttm <- rbind(nov20, dec20, jan21, feb21, mar21, apr21, may21, jun21, jul21, aug21, sep21, oct21)
+rm(nov20, dec20, jan21, feb21, mar21, apr21, may21, jun21, jul21, aug21, sep21, oct21)
+ttm<-ttm %>% mutate(year=year(started_at),month=month(started_at), day=day(started_at))
+ttm <- mutate(ttm, ride_length=ended_at - started_at)
+ttm[['ride_length']] <- hms::hms(seconds_to_period(ttm[['ride_length']]))
+ttm <- mutate(ttm,day_of_week=weekdays(started_at))
+ttm <- ttm %>% filter(ride_length>"0")
+ttm <- mutate(ttm, month= month.abb[month(started_at)])
+ttm <- ttm %>% drop_na()
+member <- ttm %>% filter(member_casual == "member")
+casual <- ttm %>% filter(member_casual == "casual")
+```
+
+## Analysis
+First, lets examine the statistical distribution of bike rides over the past 12 months, comparing between members and casuals.
+
+```{r pressure, echo=FALSE}
+member_stats <- member %>% summarize(mean = mean(ride_length), sd = sd(ride_length), number = nrow(member), max = max(ride_length), min=min(ride_length), member_casual ="member")
+casual_stats <- casual %>% summarize(mean = mean(ride_length), sd = sd(ride_length), number = nrow(member),max = max(ride_length), min=min(ride_length), member_casual = "casual")
+stats <- rbind(member_stats, casual_stats)
+rm(member_stats, casual_stats)
+```
+
+```{r}
+ggplot(data=ttm, aes(x=member_casual,y=ride_length))+
+  geom_bar(stat="summary",fun="mean",fill="paleturquoise4")+
+  labs(x="Type of Customer", y="Ride Duration (mm:ss)", title = "Average Ride Duration of the Different Types of Customers")+
+  annotate("text",x=1,y=1100,label="33:00")+
+  annotate("text",x=2,y=500,label="13:28")
+```
+
+From the above graph we can see that 
+
+
+##Change Log
+* 21/11/2021
+    + Combined all to form a single Data Frame (ttm)
+    + Split started_at into year, month and date columns
+    + Created a new column called "ride_length" which is the difference between "start_at" and "ended_at"
+    + Convert ride_length to <time> data type
+    + Created day_of_week using started_at
+    + Removed all negative ride_length. Rows decreased from 5,378,834 to 5,376,953
+    + Dropped all rows with NULL values. Rows decreased from 5,376,953 to 4,491,323
+    + Created casual tibble of dimensions 2,030,607 x 18
+    + Created member tibble of dimensions 2,460,716 x 18
+    + Created stats tibble of dimensions 2 x 6 
+     

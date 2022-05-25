@@ -1,0 +1,6 @@
+"0","daily_data <- mutate(daily_data,ExerciseMinutes= FairlyActiveMinutes+VeryActiveMinutes)"
+"0","mean(daily_data[[""ExerciseMinutes""]])"
+"1","[1]"
+"1"," 34.72979"
+"1","
+"

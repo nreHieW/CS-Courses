@@ -1,0 +1,13 @@
+"0","ggplot(tmp)+"
+"0","  geom_line(mapping =aes(x=Date,y=BMI,group=as.factor(Id),"
+"0","                         color=as.factor(Id)),size=1)+"
+"0","  scale_shape_manual(values=c(3, 16, 17, 5, 9, 20, 25, 30))+ "
+"0","  scale_x_discrete(labels=tmp_labels)+"
+"0","  ylim(18,30)+"
+"0","  labs(x=""Time"", y=""BMI"",title=""BMI Change for Each User"")+"
+"0","  theme_minimal()+"
+"0","  theme(legend.position = ""none"")+"
+"0","  annotate(""text"",x=12,y=20,label=""Each Color represents a distinct user"" )"
+"2","Warning:"
+"2"," Removed 1 row(s) containing missing values (geom_path).
+"

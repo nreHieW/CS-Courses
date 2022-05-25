@@ -1,0 +1,13 @@
+"0","ggplot(data=daily_data, aes(x=TotalDistance,y=Calories))+"
+"0","  geom_point(color=""paleturquoise4"","
+"0","             alpha = 0.7, position = position_jitter()) +"
+"0","  geom_smooth(method='lm', se=FALSE)+"
+"0","  scale_y_continuous(label=comma)+"
+"0","  scale_x_continuous(label=comma)+"
+"0","  labs(x=""Distance Covered"", y=""Calories Burnt"", "
+"0","       title=""Relationship between Distance Covered and Calories Burnt"","
+"0","       subtitle=""Data aggregated from 33 users"")+"
+"0","  theme_minimal()+"
+"0","  annotate(""text"", x= 25, y =3200, label=""Line of Best Fit"")"
+"2","`geom_smooth()` using formula 'y ~ x'
+"

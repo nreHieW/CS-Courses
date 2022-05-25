@@ -1,0 +1,4 @@
+"0","member_stats <- member %>% summarize(members_mean = mean(ride_length), sd_members = sd(ride_length), number_of_members = nrow(member))"
+"0","casual_stats <- casual %>% summarize(casuals_mean = mean(ride_length), sd_casuals = sd(ride_length), number_of_casuals = nrow(member))"
+"0","stats <- bind_cols(member_stats,casual_stats)"
+"0","rm (member_stats, casual_stats)"

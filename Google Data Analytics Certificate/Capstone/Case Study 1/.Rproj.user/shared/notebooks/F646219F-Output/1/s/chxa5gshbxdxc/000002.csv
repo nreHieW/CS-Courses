@@ -1,0 +1,198 @@
+"0","library(tidyverse)"
+"2","Registered S3 methods overwritten by 'dbplyr':
+  method         from
+  print.tbl_lazy     
+  print.tbl_sql      
+"
+"2","[30m-- [1mAttaching packages[22m ---------------------------------------------------------------------- tidyverse 1.3.1 --[39m
+"
+"2","[30m[32mv[30m [34mggplot2[30m 3.3.5     [32mv[30m [34mpurrr  [30m 0.3.4
+[32mv[30m [34mtibble [30m 3.1.6     [32mv[30m [34mdplyr  [30m 1.0.7
+[32mv[30m [34mtidyr  [30m 1.1.4     [32mv[30m [34mstringr[30m 1.4.0
+[32mv[30m [34mreadr  [30m 2.1.0     [32mv[30m [34mforcats[30m 0.5.1[39m
+"
+"2","[30m-- [1mConflicts[22m ------------------------------------------------------------------------- tidyverse_conflicts() --
+[31mx[30m [34mdplyr[30m::[32mfilter()[30m masks [34mstats[30m::filter()
+[31mx[30m [34mdplyr[30m::[32mlag()[30m    masks [34mstats[30m::lag()[39m
+"
+"0","library(readr)"
+"0","library(lubridate)"
+"2","
+Attaching package: ‘lubridate’
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    date, intersect, setdiff, union
+
+"
+"0","library(""here"")"
+"2","here() starts at C:/Users/limwe/OneDrive/Desktop/Case Study 1
+"
+"0","library(""skimr"")"
+"0","library(""janitor"")"
+"2","
+Attaching package: ‘janitor’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    chisq.test, fisher.test
+
+"
+"0","nov20 <- read_csv(""202011-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m259716[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (5): ride_id, rideable_type, start_station_name, end_station_name, member_casual
+[32mdbl[39m  (6): start_station_id, end_station_id, start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","dec20 <- read_csv(""202012-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m131573[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","jan21 <- read_csv(""202101-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m96834[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","feb21 <- read_csv(""202102-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m49622[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","mar21 <- read_csv(""202103-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m228496[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","apr21 <- read_csv(""202104-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m337230[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","may21 <- read_csv(""202105-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m531633[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","jun21 <- read_csv(""202106-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m729595[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","jul21 <- read_csv(""202107-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m822410[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","aug21 <- read_csv(""202108-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m804352[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","sep21 <- read_csv(""202109-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m756147[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","oct21 <- read_csv(""202110-divvy-tripdata.csv"")"
+"1","[1mRows: [22m[34m631226[39m [1mColumns: [22m[34m13[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m---------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (7): ride_id, rideable_type, start_station_name, start_station_id, end_station_name, end_station_id, m...
+[32mdbl[39m  (4): start_lat, start_lng, end_lat, end_lng
+[34mdttm[39m (2): started_at, ended_at
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"

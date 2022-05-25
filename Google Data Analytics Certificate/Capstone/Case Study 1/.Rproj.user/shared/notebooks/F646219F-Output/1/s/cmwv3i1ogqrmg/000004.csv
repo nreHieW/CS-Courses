@@ -1,0 +1,4 @@
+"0","member_stats <- member %>% summarize(mean = mean(ride_length), sd = sd(ride_length), number = nrow(member), max = max(ride_length), min=min(ride_length), member_casual =""member"")"
+"0","casual_stats <- casual %>% summarize(mean = mean(ride_length), sd = sd(ride_length), number = nrow(member),max = max(ride_length), min=min(ride_length), member_casual = ""casual"")"
+"0","stats <- rbind(member_stats, casual_stats)"
+"0","rm(member_stats, casual_stats)"

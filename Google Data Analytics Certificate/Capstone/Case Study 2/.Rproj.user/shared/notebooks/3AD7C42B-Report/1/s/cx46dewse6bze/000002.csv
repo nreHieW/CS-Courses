@@ -1,0 +1,11 @@
+"0","daily_data$ActivityDate <- as.Date(daily_data$ActivityDate, ""%d/%m/%y"")"
+"0","heartrate_seconds_merged$Time <- lubridate::mdy_hms(heartrate_seconds_merged$Time)"
+"0","hourly_data$ActivityHour <- lubridate::mdy_hms(hourly_data$ActivityHour)"
+"0","minutes_data_narrow$ActivityMinute <- lubridate::mdy_hms(minutes_data_narrow$ActivityMinute)"
+"0","minutes_data_narrow$ActivityMinute <- lubridate::mdy_hms(minutes_data_wide$ActivityHour)"
+"2","Error: Assigned data `lubridate::mdy_hms(minutes_data_wide$ActivityHour)` must be compatible with existing data.
+[31mx[39m Existing data has 1325580 rows.
+[31mx[39m Assigned data has 21645 rows.
+[34mi[39m Only vectors of size 1 are recycled.
+[90mRun `rlang::last_error()` to see where the error occurred.[39m
+"

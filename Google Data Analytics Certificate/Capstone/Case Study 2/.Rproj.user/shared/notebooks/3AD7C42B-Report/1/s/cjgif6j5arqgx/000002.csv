@@ -1,0 +1,190 @@
+"0","library(tidyverse)"
+"0","library(readr)"
+"0","library(lubridate)"
+"0","library(""here"")"
+"0","library(""skimr"")"
+"0","library(""janitor"")"
+"0",""
+"0","#Loading Files"
+"0","#daily_Activity_merged has all the necessary data"
+"0","dailyActivity_merged <- read_csv(""dailyActivity_merged.csv"") "
+"1","[1mRows: [22m[34m940[39m [1mColumns: [22m[34m15[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (1): ActivityDate
+[32mdbl[39m (14): Id, TotalSteps, TotalDistance, TrackerDistance, LoggedActivitiesDistance, VeryActiveDistance, Mode...
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","heartrate_seconds_merged <- read_csv(""heartrate_seconds_merged.csv"")"
+"1","[1mRows: [22m[34m2483658[39m [1mColumns: [22m[34m3[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): Time
+[32mdbl[39m (2): Id, Value
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","hourlyCalories_merged <- read_csv(""hourlyCalories_merged.csv"")"
+"1","[1mRows: [22m[34m22099[39m [1mColumns: [22m[34m3[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): ActivityHour
+[32mdbl[39m (2): Id, Calories
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","hourlyIntensities_merged <- read_csv(""hourlyIntensities_merged.csv"")"
+"1","[1mRows: [22m[34m22099[39m [1mColumns: [22m[34m4[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): ActivityHour
+[32mdbl[39m (3): Id, TotalIntensity, AverageIntensity
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","hourlySteps_merged <- read_csv(""hourlySteps_merged.csv"")"
+"1","[1mRows: [22m[34m22099[39m [1mColumns: [22m[34m3[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): ActivityHour
+[32mdbl[39m (2): Id, StepTotal
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","minuteCaloriesNarrow_merged <- read_csv(""minuteCaloriesNarrow_merged.csv"")"
+"1","[1mRows: [22m[34m1325580[39m [1mColumns: [22m[34m3[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): ActivityMinute
+[32mdbl[39m (2): Id, Calories
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","minuteCaloriesWide_merged <- read_csv(""minuteCaloriesWide_merged.csv"")"
+"1","[1mRows: [22m[34m21645[39m [1mColumns: [22m[34m62[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (1): ActivityHour
+[32mdbl[39m (61): Id, Calories00, Calories01, Calories02, Calories03, Calories04, Calories05, Calories06, Calories07...
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","minuteIntensitiesNarrow_merged <- read_csv(""minuteIntensitiesNarrow_merged.csv"")"
+"1","[1mRows: [22m[34m1325580[39m [1mColumns: [22m[34m3[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): ActivityMinute
+[32mdbl[39m (2): Id, Intensity
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","minuteIntensitiesWide_merged <- read_csv(""minuteIntensitiesWide_merged.csv"")"
+"1","[1mRows: [22m[34m21645[39m [1mColumns: [22m[34m62[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (1): ActivityHour
+[32mdbl[39m (61): Id, Intensity00, Intensity01, Intensity02, Intensity03, Intensity04, Intensity05, Intensity06, Int...
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","minuteMETsNarrow_merged <- read_csv(""minuteMETsNarrow_merged.csv"")"
+"1","[1mRows: [22m[34m1325580[39m [1mColumns: [22m[34m3[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): ActivityMinute
+[32mdbl[39m (2): Id, METs
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","minuteSleep_merged <- read_csv(""minuteSleep_merged.csv"")"
+"1","[1mRows: [22m[34m188521[39m [1mColumns: [22m[34m4[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): date
+[32mdbl[39m (3): Id, value, logId
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","minuteStepsNarrow_merged <- read_csv(""minuteStepsNarrow_merged.csv"")"
+"1","[1mRows: [22m[34m1325580[39m [1mColumns: [22m[34m3[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): ActivityMinute
+[32mdbl[39m (2): Id, Steps
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","minuteStepsWide_merged <- read_csv(""minuteStepsWide_merged.csv"")"
+"1","[1mRows: [22m[34m21645[39m [1mColumns: [22m[34m62[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m  (1): ActivityHour
+[32mdbl[39m (61): Id, Steps00, Steps01, Steps02, Steps03, Steps04, Steps05, Steps06, Steps07, Steps08, Steps09, Step...
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","sleep_day_data <- read_csv(""sleepDay_merged.csv"")"
+"1","[1mRows: [22m[34m413[39m [1mColumns: [22m[34m5[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): SleepDay
+[32mdbl[39m (4): Id, TotalSleepRecords, TotalMinutesAsleep, TotalTimeInBed
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"
+"0","weight_data <- read_csv(""weightLogInfo_merged.csv"")"
+"1","[1mRows: [22m[34m67[39m [1mColumns: [22m[34m8[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m----------------------------------------------------------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): Date
+[32mdbl[39m (6): Id, WeightKg, WeightPounds, Fat, BMI, LogId
+[33mlgl[39m (1): IsManualReport
+"
+"1","
+[36mi[39m Use [38;5;235m[48;5;253m[38;5;235m[48;5;253m`spec()`[48;5;253m[38;5;235m[49m[39m to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set [38;5;235m[48;5;253m[38;5;235m[48;5;253m`show_col_types = FALSE`[48;5;253m[38;5;235m[49m[39m to quiet this message.
+"

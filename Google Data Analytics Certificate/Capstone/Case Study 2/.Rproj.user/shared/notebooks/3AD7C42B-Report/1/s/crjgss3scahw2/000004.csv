@@ -1,0 +1,32 @@
+"0","daily_data <- dailyActivity_merged"
+"0","rm(dailyActivity_merged)"
+"0","hourly_data <- full_join(hourlyCalories_merged,hourlyIntensities_merged)"
+"1","Joining, by = c(""Id"", ""ActivityHour"")
+"
+"0","hourly_data <- full_join(hourly_data,hourlySteps_merged)"
+"1","Joining, by = c(""Id"", ""ActivityHour"")
+"
+"0","rm(hourlyCalories_merged,hourlyIntensities_merged,hourlySteps_merged)"
+"0","minutes_data_narrow <- full_join(minuteCaloriesNarrow_merged,"
+"0","                                 minuteIntensitiesNarrow_merged)"
+"1","Joining, by = c(""Id"", ""ActivityMinute"")
+"
+"0","minutes_data_narrow <- full_join(minutes_data_narrow,minuteMETsNarrow_merged)"
+"1","Joining, by = c(""Id"", ""ActivityMinute"")
+"
+"0","minutes_data_narrow <- full_join(minutes_data_narrow,minuteStepsNarrow_merged)"
+"1","Joining, by = c(""Id"", ""ActivityMinute"")
+"
+"0","rm(minuteCaloriesNarrow_merged,minuteIntensitiesNarrow_merged,"
+"0","   minuteStepsNarrow_merged,minuteMETsNarrow_merged)"
+"0",""
+"0","#Note that there is only narrow METS data"
+"0","minutes_data_wide <- full_join(minuteCaloriesWide_merged,"
+"0","                               minuteIntensitiesWide_merged)"
+"1","Joining, by = c(""Id"", ""ActivityHour"")
+"
+"0","minutes_data_wide <- full_join(minutes_data_wide,minuteStepsWide_merged)"
+"1","Joining, by = c(""Id"", ""ActivityHour"")
+"
+"0","rm(minuteCaloriesWide_merged,minuteIntensitiesWide_merged,minuteStepsWide_merged"
+"0","   )"

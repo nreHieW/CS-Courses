@@ -1,0 +1,4 @@
+"0","tmp <-hourly_data"
+"0","tmp <-separate(tmp, ActivityHour, into =c(""Date"",""Time""),sep="" "")"
+"0","tmp$Date = as.Date(tmp$Date, ""%dm/%d/%y"")"
+"0",""

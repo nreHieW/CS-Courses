@@ -1,0 +1,11 @@
+"0","ggplot(sleep_day_data,aes(x=TotalTimeInBed, y=TotalMinutesAsleep,color=as.factor(Id)))+"
+"0","  scale_shape_manual(values=c(3, 16, 17, 5, 9, 20, 25, 30))+ "
+"0","  geom_point(alpha = 0.9,  position = position_jitter()) +"
+"0","  theme_minimal()+"
+"0","  theme(legend.position = ""none"")+"
+"0","  labs(x=""Total Minutes in Bed"", y =""Total Minutes Asleep"", "
+"0","  title=""Plot of the relationship Minutes in Bed and Minutes Asleep"")+"
+"0","  annotate(""text"", x=600, y=300, label=""Each user is represented by a color"")"
+"2","Error in ggplot(sleep_day_data, aes(x = TotalTimeInBed, y = TotalMinutesAsleep,  : 
+  could not find function ""ggplot""
+"
