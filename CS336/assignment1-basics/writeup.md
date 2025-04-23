@@ -9,3 +9,9 @@ b) Non ascii characters use more than 1 byte per character. "こんにちは!"
 c) `b'\xC3\x28'` This indicates a 2 byte character but the second byte does not start with `10`
 
 ### Train_bpe_tinystories
+a) On a Google Colab, it took around 28 minutes with max memory usage of around 4GB
+b) The merging logic took the most time. Command ran `uv run scalene cs336_basics/train_bpe.py --vocab_size 10000 --input_path data/TinyStoriesV2-GPT4-valid.txt --output_path "tinystories_bpe.pkl" --html`
+
+### Train_bpe_expts_owt
+
+b) The longest token in the TinyStories tokenizer is `' accomplishment'`

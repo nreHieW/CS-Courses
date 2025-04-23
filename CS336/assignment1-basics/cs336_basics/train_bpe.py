@@ -1,21 +1,23 @@
+import os
 import regex as re
-from collections import defaultdict
+from collections import defaultdict, Counter
 from multiprocessing import Pool
+from functools import partial
 from cs336_basics.pretokenization_example import find_chunk_boundaries
 
 PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-NUM_PROCESSES = 4
+PAT = re.compile(PAT)
+NUM_PROCESSES = os.cpu_count() * 4
 
 
-def pretokenize(args) -> dict[tuple[bytes], int]:
-    path, start, end, special_tokens = args
+def pretokenize(path, start, end, special_tokens) -> Counter:
     with open(path, "rb") as f:
         f.seek(start)
         text = f.read(end - start).decode("utf-8", errors="ignore")
     splitted_text = re.split("|".join(re.escape(t) for t in special_tokens), text)
-    counts = defaultdict(int)
+    counts = Counter()
     for text in splitted_text:
-        for token_match in re.finditer(PAT, text):
+        for token_match in PAT.finditer(text):
             token = token_match.group(0)
             byte_list = [x.to_bytes() for x in list(token.encode("utf-8"))]
             counts[tuple(byte_list)] += 1
@@ -34,14 +36,15 @@ def train_bpe(input_path: str, vocab_size: int, special_tokens: list[str]) -> tu
         boundaries = find_chunk_boundaries(f, NUM_PROCESSES, "<|endoftext|>".encode("utf-8"))
 
     start_ends = list(zip(boundaries[:-1], boundaries[1:]))
-    args = [(input_path, start, end, special_tokens) for start, end in start_ends]
     with Pool(processes=NUM_PROCESSES) as pool:
-        results: list[dict[tuple[bytes], int]] = pool.map(pretokenize, args)
+        pretokenize_fn = partial(pretokenize, input_path, special_tokens=special_tokens)
+        results: list[dict[tuple[bytes], int]] = pool.starmap(pretokenize_fn, [(start, end) for start, end in start_ends])
 
-    combined_pretokens: dict[tuple[bytes], int] = defaultdict(int)
-    for item in results:
-        for k, v in item.items():
-            combined_pretokens[k] += v
+    # combined_pretokens: dict[tuple[bytes], int] = defaultdict(int)
+    # for item in results:
+    #     for k, v in item.items():
+    #         combined_pretokens[k] += v
+    combined_pretokens = sum(results, Counter())
     pair_counts: dict[tuple[bytes], int] = defaultdict(int)
     for pretoken_bytes, v in combined_pretokens.items():
         for byte1, byte2 in zip(pretoken_bytes[:-1], pretoken_bytes[1:]):
@@ -81,3 +84,18 @@ def train_bpe(input_path: str, vocab_size: int, special_tokens: list[str]) -> tu
         combined_pretokens = new_pretokens
 
     return vocab, merges
+
+
+if __name__ == "__main__":
+    import argparse
+    import pickle
+
+    parser = argparse.ArgumentParser(description="Train BPE tokenizer")
+    parser.add_argument("--input_path", type=str, help="Path to the input file")
+    parser.add_argument("--vocab_size", type=int, help="Size of the vocabulary")
+    parser.add_argument("--output_path", type=str, help="Path to the output file")
+    args = parser.parse_args()
+    vocab, merges = train_bpe(args.input_path, args.vocab_size, ["<|endoftext|>"])
+    pickle.dump({"merges": merges, "vocab": vocab}, open(args.output_path, "wb"))
+
+# !uv run cs336_basics/train_bpe.py --vocab_size 32000 --input_path /content/CS-Courses/CS336/assignment1-basics/data/owt_train.txt --output_path /content/CS-Courses/CS336/assignment1-basics/data/owt_bpe.pkl
