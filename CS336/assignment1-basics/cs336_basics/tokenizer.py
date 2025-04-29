@@ -2,22 +2,24 @@ import pickle
 import regex as re
 from typing import Iterable
 
+
 PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+PAT = re.compile(PAT)
 
 
 class Tokenizer:
     def __init__(self, vocab: dict[int, bytes], merges: list[tuple[bytes, bytes]], special_tokens: list[str] | None = None):
         self.vocab = vocab
         self.vocab_reverse = {v: k for k, v in vocab.items()}
-        self.merges = merges
+        self.merges = {pair: i for i, pair in enumerate(merges)}
         # sort to capture the longer special tokens (for eg. ["<|endoftext|>", "<|endoftext|><|endoftext|>"])
         self.special_tokens = sorted(special_tokens, key=len, reverse=True) if special_tokens else None
 
     @classmethod
     def from_files(cls, vocab_filepath: str, merges_filepath: str, special_tokens: list[str] | None = None) -> "Tokenizer":
-        with open(vocab_filepath, "r") as f:
+        with open(vocab_filepath, "rb") as f:
             vocab = pickle.load(f)
-        with open(merges_filepath, "r") as f:
+        with open(merges_filepath, "rb") as f:
             merges = pickle.load(f)
         return cls(vocab, merges, special_tokens)
 
@@ -32,23 +34,24 @@ class Tokenizer:
                 out.append(self.vocab_reverse[text.encode("utf-8")])
             elif text:
                 pretokens = re.findall(PAT, text)
-                pretoken_bytes = [tuple([x.to_bytes() for x in token.encode("utf-8")]) for token in pretokens]
-                for pretoken_idx in range(len(pretoken_bytes)):
-                    pretoken = pretoken_bytes[pretoken_idx]
-                    while len(pretoken) > 1:
-                        change = False
-                        for merge_a, merge_b in self.merges:
-                            i = 0
-                            while i < len(pretoken):
-                                if i + 1 < len(pretoken) and pretoken[i] == merge_a and pretoken[i + 1] == merge_b:
-                                    pretoken = pretoken[:i] + tuple([b"".join((merge_a, merge_b))]) + pretoken[i + 2 :]
-                                    change = True
-                                i += 1
-                        if not change:
+                for pretoken in pretokens:
+                    pretoken_bytes = tuple(bytes([b]) for b in pretoken.encode("utf-8"))
+                    while True:
+                        best_rank, best_index = float("inf"), None
+                        for i in range(len(pretoken_bytes) - 1):
+                            curr_pair = (pretoken_bytes[i], pretoken_bytes[i + 1])
+                            curr_rank = self.merges.get(curr_pair, float("inf"))
+
+                            if curr_rank < best_rank:
+                                best_rank = curr_rank
+                                best_index = i
+
+                        if best_index is None:
                             break
 
-                    for item in pretoken:
-                        out.append(self.vocab_reverse[item])
+                        pretoken_bytes = pretoken_bytes[:best_index] + (pretoken_bytes[best_index] + pretoken_bytes[best_index + 1],) + pretoken_bytes[best_index + 2 :]
+
+                    out.extend([self.vocab_reverse[x] for x in pretoken_bytes])
         return out
 
     def encode_iterable(self, iterable: Iterable[str]) -> Iterable[int]:

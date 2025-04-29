@@ -1,13 +1,16 @@
 import os
-import regex as re
-from collections import defaultdict, Counter
-from multiprocessing import Pool
+import time
+from collections import Counter, defaultdict
 from functools import partial
+from multiprocessing import Pool
+
+import regex as re
+
 from cs336_basics.pretokenization_example import find_chunk_boundaries
 
 PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
 PAT = re.compile(PAT)
-NUM_PROCESSES = os.cpu_count() * 4
+NUM_PROCESSES = os.cpu_count()
 
 
 def pretokenize(path, start, end, special_tokens) -> Counter:
@@ -40,10 +43,6 @@ def train_bpe(input_path: str, vocab_size: int, special_tokens: list[str]) -> tu
         pretokenize_fn = partial(pretokenize, input_path, special_tokens=special_tokens)
         results: list[dict[tuple[bytes], int]] = pool.starmap(pretokenize_fn, [(start, end) for start, end in start_ends])
 
-    # combined_pretokens: dict[tuple[bytes], int] = defaultdict(int)
-    # for item in results:
-    #     for k, v in item.items():
-    #         combined_pretokens[k] += v
     combined_pretokens = sum(results, Counter())
     pair_counts: dict[tuple[bytes], int] = defaultdict(int)
     for pretoken_bytes, v in combined_pretokens.items():
@@ -93,9 +92,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train BPE tokenizer")
     parser.add_argument("--input_path", type=str, help="Path to the input file")
     parser.add_argument("--vocab_size", type=int, help="Size of the vocabulary")
-    parser.add_argument("--output_path", type=str, help="Path to the output file")
+    parser.add_argument("--output_dir", type=str)
     args = parser.parse_args()
+    start = time.time()
     vocab, merges = train_bpe(args.input_path, args.vocab_size, ["<|endoftext|>"])
-    pickle.dump({"merges": merges, "vocab": vocab}, open(args.output_path, "wb"))
+    end = time.time()
+    print(f"Training took {end - start:.2f} seconds")
+    pickle.dump(vocab, open(os.path.join(args.output_dir, "vocab.pkl"), "wb"))
+    pickle.dump(merges, open(os.path.join(args.output_dir, "merges.pkl"), "wb"))
 
 # !uv run cs336_basics/train_bpe.py --vocab_size 32000 --input_path /content/CS-Courses/CS336/assignment1-basics/data/owt_train.txt --output_path /content/CS-Courses/CS336/assignment1-basics/data/owt_bpe.pkl
