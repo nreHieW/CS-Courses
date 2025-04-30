@@ -182,8 +182,13 @@ class TransformerLM(nn.Module):
                 probs = softmax(logits / temperature, dim=-1)
                 sorted_probs, sorted_indices = torch.sort(probs, descending=True)
                 cumulative = torch.cumsum(sorted_probs, dim=-1)
-                masked_probs = torch.where(cumulative > top_p, 0, sorted_probs)
-                masked_probs /= masked_probs.sum()  # softmax does not preserve 0
+                # - sorted_probs to get previous cumulative sum
+                keep = cumulative - sorted_probs <= top_p
+                masked_probs = torch.where(keep, sorted_probs, 0.0)
+                if masked_probs.sum(dim=-1, keepdim=True).eq(0.0).any():
+                    keep[:, 0] = True
+
+                masked_probs /= masked_probs.sum(dim=-1, keepdim=True)  # softmax does not preserve 0
                 next_token_idx = torch.multinomial(masked_probs, 1)
                 next_token = torch.gather(sorted_indices, -1, next_token_idx)
             tokens = torch.cat([tokens, next_token], dim=-1)

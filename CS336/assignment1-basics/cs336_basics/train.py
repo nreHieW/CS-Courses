@@ -29,10 +29,9 @@ class TrainingArguments:
     val_data_path: str
 
     batch_size: int = 1
-    context_length: int = 12
-    max_iters: int | None = None  # Changed to be optional
-    target_tokens: int = 327_680_000  # ~327M tokens as default target
-
+    context_length: int = 256
+    max_iters: int | None = None
+    target_tokens: int = 327_680_000
     vocab_size: int = 10000
     d_model: int = 512
     num_layers: int = 4
@@ -41,10 +40,10 @@ class TrainingArguments:
     rope_theta: float = 10000.0
 
     grad_clip: float = 1.0
-    warmup_iters: int = 200
-    cosine_cycle_iters: int = 10000
-    max_learning_rate: float = 1e-3
-    min_learning_rate: float = 1e-5
+    warmup_iters: int | None = None
+    cosine_cycle_iters: int | None = None
+    max_learning_rate: float = 3e-3
+    min_learning_rate: float | None = None
     weight_decay: float = 1e-1
     beta1: float = 0.9
     beta2: float = 0.95
@@ -52,7 +51,8 @@ class TrainingArguments:
     val_every: int = 1000
     val_batches: int = 10
 
-    project_name: str = "cs336"
+    run_name: str | None = None
+    wandb_project_name: str = "cs336"
 
 
 def parse_args() -> TrainingArguments:
@@ -65,11 +65,15 @@ def parse_args() -> TrainingArguments:
         type=str,
         required=True,
     )
-    parser.add_argument("--max_learning_rate", type=float, default=1e-4)
+    parser.add_argument("--max_learning_rate", type=float, default=3e-4)
     parser.add_argument("--batch_size", type=int, default=4)
     parser.add_argument("--val_batches", type=int, default=10)
+    parser.add_argument("--max_iters", type=int)
+    parser.add_argument("--run_name", type=str)
     args = parser.parse_args()
-    return TrainingArguments(**vars(args))
+
+    args_dict = vars(args)
+    return TrainingArguments(**args_dict)
 
 
 def tokenize_data(tokenizer: Tokenizer, train_data_path: str, val_data_path: str) -> tuple[str, str]:
@@ -98,7 +102,7 @@ def main():
     args = parse_args()
     print("Arguments:", args)
 
-    wandb.init(project=args.project_name, config=vars(args))
+    wandb.init(project=args.wandb_project_name, name=args.run_name, config=vars(args))
 
     tokenizer: Tokenizer = Tokenizer.from_files(args.tokenizer_vocab_path, args.tokenizer_merges_path, special_tokens="<|endoftext|>")
     train_tokens_path = args.train_data_path.replace(".txt", "_tokens.npy")
@@ -112,13 +116,16 @@ def main():
     if args.max_iters is None:
         tokens_per_iter = args.batch_size * args.context_length
         args.max_iters = args.target_tokens // tokens_per_iter
+        args.warmup_iters = args.max_iters // 20
+        args.min_learning_rate = args.max_learning_rate / 100
+        args.cosine_cycle_iters = args.max_iters
         print(f"Automatically calculated max_iters={args.max_iters} to reach target {args.target_tokens:,} tokens")
 
     total_tokens = args.batch_size * args.context_length * args.max_iters
     print(f"Total Tokens to be Processed: {total_tokens:,}")
     model = TransformerLM(
         vocab_size=args.vocab_size,
-        context_length=args.context_length,
+        context_length=args.context_length * 2,
         d_model=args.d_model,
         num_layers=args.num_layers,
         num_heads=args.num_heads,
@@ -137,10 +144,11 @@ def main():
     )
 
     best_val_loss = float("inf")
-    if os.path.exists("checkpoint.pth"):
-        iteration = load_checkpoint("checkpoint.pth", model, optimizer)
-    else:
-        iteration = 1
+    # if os.path.exists("checkpoint.pth"):
+    #     iteration = load_checkpoint("checkpoint.pth", model, optimizer)
+    # else:
+    #     iteration = 1
+    iteration = 1
 
     for i in tqdm(range(iteration, args.max_iters + 1)):
         x, y = get_batch(train_data, args.batch_size, args.context_length, DEVICE)
@@ -153,6 +161,11 @@ def main():
 
         logits = model(x)
         loss = cross_entropy_loss(logits, y)
+        if torch.isnan(loss):
+            print("Input:", x)
+            print("Target:", y)
+            print("Model output:", logits)
+            raise ValueError("Loss is NaN - check inputs, targets and model outputs above")
         loss.backward()
         clip_gradients(model.parameters(), args.grad_clip)
         optimizer.step()
@@ -176,9 +189,9 @@ def main():
 
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
-                save_checkpoint("best_model.pth", model, optimizer, i)
+                save_checkpoint(model=model, optimizer=optimizer, iteration=i, out="best_model.pth")
 
-            save_checkpoint(f"checkpoint_{i}.pth", model, optimizer, i)
+            save_checkpoint(model=model, optimizer=optimizer, iteration=i, out=f"checkpoint_{i}.pth")
 
     test_gen = model.generate("Once upon a time,", tokenizer, temperature=0.8, top_p=0.9, max_new_tokens=256)
     generated_text = tokenizer.decode(test_gen[0].tolist())
